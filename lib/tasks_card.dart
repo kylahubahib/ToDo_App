@@ -30,14 +30,13 @@ class _TasksCardState extends State<TasksCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.only(top: 15.0, left: 15.0, right: 15.0),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: CupertinoListTile(
           leading: Transform.scale(
-            scale: 1.5,
+            scale: 1.2,
             child: CupertinoCheckbox(
-              shape: const CircleBorder(),
               value: isCompleted,
               onChanged: (value) async {
                 setState(() {
@@ -54,7 +53,8 @@ class _TasksCardState extends State<TasksCard> {
             widget.task.title,
             style: const TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
+              color: Color.fromRGBO(13, 71, 161, 1),
             ),
           ),
           subtitle: Text(

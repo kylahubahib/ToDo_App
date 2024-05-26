@@ -14,19 +14,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
   List<Task> tasks = [];
-
-  Future<void> getAllTasks() async {
-    setState(() => isLoading = true);
-
-    tasks = await TasksDatabase.instance.readAllTasks();
-
-    setState(() => isLoading = false);
-  }
+  List<Task> filteredTasks = [];
 
   @override
   void initState() {
     super.initState();
     getAllTasks();
+  }
+
+  Future<void> getAllTasks() async {
+    setState(() => isLoading = true);
+    tasks = await TasksDatabase.instance.readAllTasks();
+    filteredTasks = List.from(tasks); // Ensure filteredTasks is updated
+    setState(() => isLoading = false);
   }
 
   @override
@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue[900],
         title: const Text(
-          'Create Task',
+          'ToDo List',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -52,9 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue[900],
         onPressed: () async {
-          await Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => const AddTask()));
-          getAllTasks();
+          final result = await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const AddTask(),
+            ),
+          );
+          if (result == true) {
+            await getAllTasks(); // Refresh the task list after adding a new task
+          }
         },
         child: const Icon(
           Icons.add_rounded,
@@ -66,31 +71,74 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTasksList() {
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        final task = tasks[index];
-        return GestureDetector(
-            onTap: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => AddTask(
-                    task: task,
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(13.0),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              prefixIcon: const Icon(Icons.search),
+              contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide:
+                    const BorderSide(color: Color.fromRGBO(13, 71, 161, 1)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: const BorderSide(color: Colors.grey),
+              ),
+            ),
+            onChanged: (value) {
+              setState(() {
+                filteredTasks = tasks
+                    .where((task) =>
+                        task.title.toLowerCase().contains(value.toLowerCase()))
+                    .toList();
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 10),
+        Expanded(
+          child: ListView.builder(
+            itemCount: filteredTasks.length,
+            itemBuilder: (context, index) {
+              final task = filteredTasks[index];
+              return GestureDetector(
+                onTap: () async {
+                  final updatedTask = await Navigator.of(context).push<Task?>(
+                    MaterialPageRoute(
+                      builder: (_) => AddTask(
+                        task: task,
+                      ),
+                    ),
+                  );
+                  if (updatedTask != null) {
+                    await getAllTasks(); // Refresh the task list after updating a task
+                  }
+                },
+                child: TasksCard(
+                  task: task,
+                  onDelete: () {
+                    setState(() {
+                      tasks.remove(task);
+                      filteredTasks.remove(
+                          task); // Remove task from filteredTasks as well
+                    });
+                    TasksDatabase.instance.deleteTask(task.id!);
+                  },
                 ),
               );
-
-              getAllTasks();
             },
-            child: TasksCard(
-              task: task,
-              onDelete: () {
-                setState(() {
-                  tasks.remove(task);
-                });
-              },
-            ));
-      },
+          ),
+        ),
+      ],
     );
   }
 }

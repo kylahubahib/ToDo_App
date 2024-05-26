@@ -32,7 +32,10 @@ class TasksDatabase {
   }
 
   //! Create Database method
-  Future _createDB(Database db, int version) async {
+  Future _createDB(
+    Database db,
+    int version,
+  ) async {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     const boolType = 'BOOLEAN NOT NULL';
@@ -50,13 +53,18 @@ class TasksDatabase {
   //! C --> CRUD = Create
   Future<Task> createTask(Task task) async {
     final db = await instance.database;
-    final id = await db.insert(tasksTable, task.toMap());
+    final id = await db.insert(
+      tasksTable,
+      task.toMap(),
+    );
+
     return task.copy(id: id);
   }
 
-  //! R -- CRUD = Read
+  //! R -- CURD = Read
   Future<Task> readTask(int id) async {
     final db = await instance.database;
+
     final taskData = await db.query(
       tasksTable,
       columns: TasksFields.values,
@@ -74,14 +82,17 @@ class TasksDatabase {
   // Get All Tasks
   Future<List<Task>> readAllTasks() async {
     final db = await instance.database;
+
     final result =
         await db.query(tasksTable, orderBy: '${TasksFields.startDate} ASC');
+
     return result.map((taskData) => Task.fromMap(taskData)).toList();
   }
 
   //! U --> CRUD = Update
   Future<int> updateTask(Task task) async {
     final db = await instance.database;
+
     return await db.update(
       tasksTable,
       task.toMap(),
@@ -95,9 +106,12 @@ class TasksDatabase {
     required bool isCompleted,
   }) async {
     final db = await instance.database;
+
     return await db.update(
       tasksTable,
-      {TasksFields.isCompleted: isCompleted ? 1 : 0},
+      {
+        TasksFields.isCompleted: isCompleted ? 1 : 0,
+      },
       where: '${TasksFields.id} = ?',
       whereArgs: [id],
     );
@@ -106,6 +120,7 @@ class TasksDatabase {
   //! D --> CRUD = Delete
   Future<int> deleteTask(int id) async {
     final db = await instance.database;
+
     return await db.delete(
       tasksTable,
       where: '${TasksFields.id} = ?',
@@ -115,6 +130,7 @@ class TasksDatabase {
 
   Future close() async {
     final db = await instance.database;
+
     db.close();
   }
 }

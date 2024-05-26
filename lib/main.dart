@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'To Do List App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromRGBO(227, 242, 253, 1)),
+            seedColor: const Color.fromRGBO(187, 222, 251, 1)),
         textTheme: GoogleFonts.poppinsTextTheme(textTheme),
         useMaterial3: true,
       ),
