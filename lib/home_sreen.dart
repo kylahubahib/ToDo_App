@@ -39,18 +39,28 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('To do List App'),
+        backgroundColor: Colors.blue[900],
+        title: const Text(
+          'Create Task',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildTasksList(),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue[900],
         onPressed: () async {
           await Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => const AddTask()));
           getAllTasks();
         },
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add_rounded,
+          color: Colors.white,
+          size: 40.0,
+        ),
       ),
     );
   }
