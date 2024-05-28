@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: const Text(
-                'Archive',
+                'History',
                 style: TextStyle(color: Colors.white),
               ))
         ],
