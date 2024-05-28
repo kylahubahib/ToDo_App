@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue[900],
         onPressed: () async {
-          final result = await Navigator.of(context).push(
+          final result = await Navigator.of(context).push<bool>(
             MaterialPageRoute(
               builder: (_) => const AddTask(),
             ),
