@@ -83,8 +83,25 @@ class TasksDatabase {
   Future<List<Task>> readAllTasks() async {
     final db = await instance.database;
 
-    final result =
-        await db.query(tasksTable, orderBy: '${TasksFields.startDate} ASC');
+    final result = await db.query(
+      tasksTable,
+      where: '${TasksFields.isCompleted} = ?',
+      whereArgs: [0],
+      orderBy: '${TasksFields.startDate} ASC',
+    );
+
+    return result.map((taskData) => Task.fromMap(taskData)).toList();
+  }
+
+  Future<List<Task>> readCompletedTasks() async {
+    final db = await instance.database;
+
+    final result = await db.query(
+      tasksTable,
+      where: '${TasksFields.isCompleted} = ?',
+      whereArgs: [1],
+      orderBy: '${TasksFields.startDate} ASC',
+    );
 
     return result.map((taskData) => Task.fromMap(taskData)).toList();
   }

@@ -83,7 +83,9 @@ class _AddTaskState extends State<AddTask> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('New Task')),
+      appBar: AppBar(
+        title: const Text('New Task'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: 16.0,

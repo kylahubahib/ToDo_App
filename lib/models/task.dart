@@ -32,7 +32,7 @@ class Task {
     required this.title,
     required this.description,
     required this.startDate,
-    required this.isCompleted,
+    this.isCompleted = false,
   });
 
   Task copy({

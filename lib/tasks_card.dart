@@ -9,10 +9,12 @@ class TasksCard extends StatefulWidget {
     super.key,
     required this.task,
     required this.onDelete,
+    required this.onCompleted,
   });
 
   final Task task;
   final VoidCallback onDelete;
+  final VoidCallback onCompleted;
 
   @override
   State<TasksCard> createState() => _TasksCardState();
@@ -37,15 +39,13 @@ class _TasksCardState extends State<TasksCard> {
           leading: Transform.scale(
             scale: 1.2,
             child: CupertinoCheckbox(
-              value: isCompleted,
+              value: false,
               onChanged: (value) async {
-                setState(() {
-                  isCompleted = value ?? false;
-                });
                 await TasksDatabase.instance.markTaskAsCompleted(
                   id: widget.task.id!,
                   isCompleted: isCompleted,
                 );
+                widget.onCompleted();
               },
             ),
           ),
@@ -59,7 +59,7 @@ class _TasksCardState extends State<TasksCard> {
           ),
           subtitle: Text(
             widget.task.description,
-            maxLines: 3,
+            maxLines: 5,
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -69,6 +69,7 @@ class _TasksCardState extends State<TasksCard> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   widget.task.startDate.format(),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
               // Delete button

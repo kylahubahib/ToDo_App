@@ -3,6 +3,7 @@ import 'package:todo_app/add_task.dart';
 import 'package:todo_app/database/tasks_database.dart';
 import 'package:todo_app/models/task.dart';
 import 'package:todo_app/tasks_card.dart';
+import 'package:todo_app/view_completed_task.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> getAllTasks() async {
     setState(() => isLoading = true);
     tasks = await TasksDatabase.instance.readAllTasks();
-    filteredTasks = List.from(tasks); // Ensure filteredTasks is updated
+    filteredTasks = List.from(tasks);
     setState(() => isLoading = false);
   }
 
@@ -44,7 +45,20 @@ class _HomeScreenState extends State<HomeScreen> {
           'ToDo List',
           style: TextStyle(color: Colors.white),
         ),
-        centerTitle: true,
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const ViewCompletedTask(),
+                  ),
+                );
+              },
+              child: const Text(
+                'Archive',
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -58,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
           if (result == true) {
-            await getAllTasks(); // Refresh the task list after adding a new task
+            await getAllTasks();
           }
         },
         child: const Icon(
@@ -120,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                   if (updatedTask != null) {
-                    await getAllTasks(); // Refresh the task list after updating a task
+                    await getAllTasks();
                   }
                 },
                 child: TasksCard(
@@ -128,10 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   onDelete: () {
                     setState(() {
                       tasks.remove(task);
-                      filteredTasks.remove(
-                          task); // Remove task from filteredTasks as well
+                      filteredTasks.remove(task);
                     });
                     TasksDatabase.instance.deleteTask(task.id!);
+                  },
+                  onCompleted: () async {
+                    await getAllTasks();
                   },
                 ),
               );
