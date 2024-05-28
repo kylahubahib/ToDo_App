@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
               final task = filteredTasks[index];
               return GestureDetector(
                 onTap: () async {
-                  final updatedTask = await Navigator.of(context).push<Task?>(
+                  final updatedTask = await Navigator.of(context).push<bool>(
                     MaterialPageRoute(
                       builder: (_) => AddTask(
                         task: task,

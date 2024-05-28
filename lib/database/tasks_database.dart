@@ -118,17 +118,12 @@ class TasksDatabase {
     );
   }
 
-  Future<int> markTaskAsCompleted({
-    required int id,
-    required bool isCompleted,
-  }) async {
+  Future<void> markTaskAsCompleted(
+      {required int id, required bool isCompleted}) async {
     final db = await instance.database;
-
-    return await db.update(
+    await db.update(
       tasksTable,
-      {
-        TasksFields.isCompleted: isCompleted ? 1 : 0,
-      },
+      {TasksFields.isCompleted: isCompleted ? 1 : 0},
       where: '${TasksFields.id} = ?',
       whereArgs: [id],
     );

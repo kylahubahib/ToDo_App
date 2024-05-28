@@ -39,13 +39,18 @@ class _TasksCardState extends State<TasksCard> {
           leading: Transform.scale(
             scale: 1.2,
             child: CupertinoCheckbox(
-              value: false,
+              value: isCompleted,
               onChanged: (value) async {
-                await TasksDatabase.instance.markTaskAsCompleted(
-                  id: widget.task.id!,
-                  isCompleted: isCompleted,
-                );
-                widget.onCompleted();
+                if (value != null) {
+                  setState(() {
+                    isCompleted = value;
+                  });
+                  await TasksDatabase.instance.markTaskAsCompleted(
+                    id: widget.task.id!,
+                    isCompleted: isCompleted,
+                  );
+                  widget.onCompleted();
+                }
               },
             ),
           ),
