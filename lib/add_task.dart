@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/database/tasks_database.dart';
 import 'package:todo_app/extensions/extensions.dart';
@@ -83,9 +84,7 @@ class _AddTaskState extends State<AddTask> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Task'),
-      ),
+      appBar: AppBar(title: const Text('New Task')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: 16.0,
@@ -131,12 +130,14 @@ class _AddTaskState extends State<AddTask> {
                   ),
                   TextButton(
                     onPressed: () async {
+                      final today = DateTime.now();
                       _startDate = await showDatePicker(
                             context: context,
-                            firstDate: DateTime(2000),
+                            firstDate: today,
+                            initialDate: today,
                             lastDate: DateTime(3000),
                           ) ??
-                          DateTime.now();
+                          today;
                       setState(() {});
                     },
                     child: Text(
